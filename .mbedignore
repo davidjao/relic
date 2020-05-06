@@ -13,7 +13,11 @@ src/rand/relic_rand_rdrnd.c
 src/eb/*
 src/ed/*
 src/fb/*
-bench/*
+bench/bench_[a-m]*
+bench/bench_pc.c
+bench/bench_pp.c
+bench/bench_r*
 test/test_[a-m]*
 test/test_pc.c
+#test/test_pp.c
 test/test_r*

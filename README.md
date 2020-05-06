@@ -24,39 +24,41 @@ This version does not build using the online mbed compiler, since it uses featur
 
 ### Build output
 
+    Building project relic (NUCLEO_F767ZI, GCC_ARM)
+    Scan: relic
     Link: relic
     Elf2Bin: relic
-    | Module             |      .text |    .data |          .bss |
-    |--------------------|------------|----------|---------------|
-    | [fill]             |    144(+0) |   11(+0) |        22(+0) |
-    | [lib]/c.a          |  26000(+0) | 2472(+0) |        89(+0) |
-    | [lib]/gcc.a        |    768(+0) |    0(+0) |         0(+0) |
-    | [lib]/misc         |    180(+0) |    4(+0) |        28(+0) |
-    | mbed-os/components |    162(+0) |    0(+0) |         0(+0) |
-    | mbed-os/drivers    |    244(+0) |    0(+0) |         0(+0) |
-    | mbed-os/events     |   1504(+0) |    0(+0) |      3108(+0) |
-    | mbed-os/features   |   2166(+0) |    0(+0) |     12796(+0) |
-    | mbed-os/hal        |   1666(+0) |    8(+0) |       130(+0) |
-    | mbed-os/platform   |   4590(+0) |  260(+0) |       221(+0) |
-    | mbed-os/rtos       |  10560(+0) |  168(+0) | 34908(+16384) |
-    | mbed-os/targets    |  13058(+0) |    5(+0) |      1262(+0) |
-    | src/arch           |      4(+0) |    0(+0) |         0(+0) |
-    | src/bn             |   4692(+0) |    0(+0) |         0(+0) |
-    | src/dv             |    144(+0) |    0(+0) |         0(+0) |
-    | src/ep             |   6758(+0) |    0(+0) |         0(+0) |
-    | src/epx            |   6356(+0) |    0(+0) |         0(+0) |
-    | src/fp             |   3202(+0) |    0(+0) |         0(+0) |
-    | src/fpx            |  26038(+0) |    0(+0) |         0(+0) |
-    | src/low            |   6124(+0) |    0(+0) |         0(+0) |
-    | src/md             |    844(+0) |   32(+0) |         0(+0) |
-    | src/pp             |  19130(+0) |    0(+0) |         0(+0) |
-    | src/rand           |    800(+0) |    0(+0) |         0(+0) |
-    | src/relic_core.o   |    100(+0) |    0(+0) |     14220(+0) |
-    | src/relic_test.o   |     24(+0) |    0(+0) |         0(+0) |
-    | src/relic_util.o   |     70(+0) |    0(+0) |         0(+0) |
-    | test/test_pp.o     |  15768(+0) |    0(+0) |         0(+0) |
-    | Subtotals          | 151096(+0) | 2960(+0) | 66784(+16384) |
-    Total Static RAM memory (data + bss): 69744(+16384) bytes
+    | Module             |      .text |    .data |      .bss |
+    |--------------------|------------|----------|-----------|
+    | [fill]             |    140(+0) |   11(+0) |    22(+0) |
+    | [lib]/c.a          |  26000(+0) | 2472(+0) |    89(+0) |
+    | [lib]/gcc.a        |    768(+0) |    0(+0) |     0(+0) |
+    | [lib]/misc         |    180(+0) |    4(+0) |    28(+0) |
+    | mbed-os/components |    162(+0) |    0(+0) |     0(+0) |
+    | mbed-os/drivers    |    244(+0) |    0(+0) |     0(+0) |
+    | mbed-os/events     |   1504(+0) |    0(+0) |  3108(+0) |
+    | mbed-os/features   |   2166(+0) |    0(+0) | 12796(+0) |
+    | mbed-os/hal        |   1666(+0) |    8(+0) |   130(+0) |
+    | mbed-os/platform   |   4590(+0) |  260(+0) |   221(+0) |
+    | mbed-os/rtos       |  10560(+0) |  168(+0) | 34908(+0) |
+    | mbed-os/targets    |  13058(+0) |    5(+0) |  1262(+0) |
+    | src/arch           |      4(+0) |    0(+0) |     0(+0) |
+    | src/bn             |   4692(+0) |    0(+0) |     0(+0) |
+    | src/dv             |    144(+0) |    0(+0) |     0(+0) |
+    | src/ep             |   6758(+0) |    0(+0) |     0(+0) |
+    | src/epx            |   6356(+0) |    0(+0) |     0(+0) |
+    | src/fp             |   3202(+0) |    0(+0) |     0(+0) |
+    | src/fpx            |  26038(+0) |    0(+0) |     0(+0) |
+    | src/low            |   6124(+0) |    0(+0) |     0(+0) |
+    | src/md             |    844(+0) |   32(+0) |     0(+0) |
+    | src/pp             |  19130(+0) |    0(+0) |     0(+0) |
+    | src/rand           |    804(+0) |    0(+0) |     0(+0) |
+    | src/relic_core.o   |    100(+0) |    0(+0) | 14196(+0) |
+    | src/relic_test.o   |     24(+0) |    0(+0) |     0(+0) |
+    | src/relic_util.o   |     70(+0) |    0(+0) |     0(+0) |
+    | test/test_pp.o     |  15768(+0) |    0(+0) |     0(+0) |
+    | Subtotals          | 151096(+0) | 2960(+0) | 66760(+0) |
+    Total Static RAM memory (data + bss): 69720(+0) bytes
     Total Flash memory (text + data): 154056(+0) bytes
     
     Image: ./BUILD/NUCLEO_F767ZI/GCC_ARM/relic.bin

@@ -703,7 +703,7 @@
 /** Cycle-counting timer. */
 #define CYCLE    6
 /** Chosen timer. */
-#define TIMER    POSIX
+#define TIMER    ANSI
 
 /** Prefix to identity this build of the library. */
 /* #undef LABEL */

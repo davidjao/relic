@@ -28,3 +28,9 @@ Testing/
 install_manifest.txt
 
 src/low/fiat/*.c
+mbed-os.lib
+mbed-os
+.mbed
+BUILD/
+__pycache__/
+mbed_settings.py
