@@ -10,6 +10,7 @@ This is a version of [RELIC](https://github.com/relic-toolkit/relic) for the [AR
  * This version only builds the BN-254 pairing algorithms.
  * An insecure random number generator is used. On platforms which have a hardware TRNG (true random number generator), you can use [mbedtls](https://tls.mbed.org/kb/how-to/add-a-random-generator) for random number generation.
  * Arithmetic is done with the `easy` backend. It is possible to improve performance by using [GMP](https://singletonresearch.com/2017/07/11/cmake-and-gnu-multiple-precision-arithmetic-library-on-arm-cortex-m4/) on platforms that support it. For maximum performance one should write an assembly-optimized arithmetic backend.
+ * Serial terminal uses 115200 baud rate. Adjust in `mbed_app.json` if needed. Depending on your console, you may see staircase text, since the test program does not include carriage returns in newlines in console output.
  
 ### Build instructions
  
