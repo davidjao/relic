@@ -25,7 +25,6 @@ bin/
 
 CMakeSettings.json
 Testing/
-include/relic_conf.h
 install_manifest.txt
 
 src/low/fiat/*.c

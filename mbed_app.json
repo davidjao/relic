@@ -1,0 +1,9 @@
+{
+    "target_overrides": {
+        "*": {
+            "rtos.main-thread-stack-size": "32768",
+            "rtos.thread-stack-size": "32768",
+            "platform.stdio-baud-rate": 115200
+        }
+    }
+}
