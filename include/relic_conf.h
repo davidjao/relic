@@ -410,6 +410,8 @@
 #define BASIC	 1
 /** Projective coordinates. */
 #define PROJC	 2
+/** Jacobian coordinates. */
+#define JACOB   3
 /** Chosen prime elliptic curve coordinate method. */
 #define EP_ADD	 PROJC
 
@@ -614,6 +616,8 @@
 /** Choice of hash function. */
 #define MD_METHD "SH256"
 
+/** Chosen RSA method. */
+#define CP_CRT
 /** RSA without padding. */
 #define BASIC    1
 /** RSA PKCS#1 v1.5 padding. */
@@ -622,20 +626,6 @@
 #define PKCS2    3
 /** Chosen RSA padding method. */
 #define CP_RSAPD PKCS1
-
-/** Slow RSA decryption/signature. */
-#define BASIC    1
-/** Fast RSA decryption/signature with CRT. */
-#define QUICK    2
-/** Chosen RSA method. */
-#define CP_RSA   QUICK
-
-/** Standard ECDSA. */
-#define BASIC    1
-/** ECDSA with fast verification. */
-#define QUICK    2
-/** Chosen ECDSA method. */
-#define CP_ECDSA 
 
 /** Automatic memory allocation. */
 #define AUTO     1

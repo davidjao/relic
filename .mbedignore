@@ -21,3 +21,4 @@ test/test_[a-m]*
 test/test_pc.c
 #test/test_pp.c
 test/test_r*
+demo/*
