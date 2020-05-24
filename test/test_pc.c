@@ -216,6 +216,7 @@ int addition1(void) {
 			g1_rand(a);
 			g1_neg(d, a);
 			g1_add(e, a, d);
+			TEST_ASSERT(g1_is_valid(e), end);
 			TEST_ASSERT(g1_is_infty(e), end);
 		} TEST_END;
 	}
@@ -268,6 +269,7 @@ int subtraction1(void) {
 		TEST_BEGIN("point subtraction has inverse") {
 			g1_rand(a);
 			g1_sub(c, a, a);
+			TEST_ASSERT(g1_is_valid(c), end);
 			TEST_ASSERT(g1_is_infty(c), end);
 		}
 		TEST_END;
@@ -334,7 +336,7 @@ static int multiplication1(void) {
 		bn_new(k);
 
 		g1_get_gen(p);
-		g1_get_ord(n);
+		pc_get_ord(n);
 
 		TEST_BEGIN("generator has the right order") {
 			g1_mul(r, p, n);
@@ -402,7 +404,7 @@ static int fixed1(void) {
 		bn_new(k);
 
 		g1_get_gen(p);
-		g1_get_ord(n);
+		pc_get_ord(n);
 
 		for (int i = 0; i < RLC_G1_TABLE; i++) {
 			g1_new(t[i]);
@@ -465,7 +467,7 @@ static int simultaneous1(void) {
 		g1_new(r);
 
 		g1_get_gen(p);
-		g1_get_ord(n);
+		pc_get_ord(n);
 
 		TEST_BEGIN("simultaneous point multiplication is correct") {
 			bn_zero(k);
@@ -581,7 +583,7 @@ static int hashing1(void) {
 		g1_new(a);
 		bn_new(n);
 
-		g1_get_ord(n);
+		pc_get_ord(n);
 
 		TEST_BEGIN("point hashing is correct") {
 			rand_bytes(msg, sizeof(msg));
@@ -783,6 +785,7 @@ int addition2(void) {
 			g2_rand(a);
 			g2_neg(d, a);
 			g2_add(e, a, d);
+			TEST_ASSERT(g2_is_valid(e), end);
 			TEST_ASSERT(g2_is_infty(e), end);
 		} TEST_END;
 	}
@@ -835,6 +838,7 @@ int subtraction2(void) {
 		TEST_BEGIN("point subtraction has inverse") {
 			g2_rand(a);
 			g2_sub(c, a, a);
+			TEST_ASSERT(g2_is_valid(c), end);
 			TEST_ASSERT(g2_is_infty(c), end);
 		}
 		TEST_END;
@@ -901,7 +905,7 @@ static int multiplication2(void) {
 		bn_new(k);
 
 		g2_get_gen(p);
-		g2_get_ord(n);
+		pc_get_ord(n);
 
 		TEST_BEGIN("generator has the right order") {
 			g2_mul(r, p, n);
@@ -969,7 +973,7 @@ static int fixed2(void) {
 		bn_new(k);
 
 		g2_get_gen(p);
-		g2_get_ord(n);
+		pc_get_ord(n);
 
 		for (int i = 0; i < RLC_G2_TABLE; i++) {
 			g2_new(t[i]);
@@ -1032,7 +1036,7 @@ static int simultaneous2(void) {
 		g2_new(r);
 
 		g2_get_gen(p);
-		g2_get_ord(n);
+		pc_get_ord(n);
 
 		TEST_BEGIN("simultaneous point multiplication is correct") {
 			bn_zero(k);
@@ -1148,7 +1152,7 @@ static int hashing2(void) {
 		g2_new(a);
 		bn_new(n);
 
-		g2_get_ord(n);
+		pc_get_ord(n);
 
 		TEST_BEGIN("point hashing is correct") {
 			rand_bytes(msg, sizeof(msg));
@@ -1400,7 +1404,7 @@ int exponentiation(void) {
 		bn_new(n);
 
 		gt_get_gen(a);
-		gt_get_ord(n);
+		pc_get_ord(n);
 
 		TEST_BEGIN("generator has the right order") {
 			gt_exp(c, a, n);
@@ -1494,7 +1498,7 @@ static int pairing(void) {
 			g2_new(q[j]);
 		}
 
-		g1_get_ord(n);
+		pc_get_ord(n);
 
 		TEST_BEGIN("pairing non-degeneracy is correct") {
 			g1_rand(p[0]);
