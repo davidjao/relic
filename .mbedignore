@@ -10,6 +10,8 @@ src/arch/relic_arch_msp.c
 src/arch/relic_arch_none.c
 src/arch/relic_arch_x*.c
 src/rand/relic_rand_rdrnd.c
+src/cp/*
+src/pc/*
 src/eb/*
 src/ed/*
 src/fb/*
