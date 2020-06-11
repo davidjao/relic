@@ -1,6 +1,6 @@
 /*
  * RELIC is an Efficient LIbrary for Cryptography
- * Copyright (C) 2007-2019 RELIC Authors
+ * Copyright (C) 2007-2020 RELIC Authors
  *
  * This file is part of RELIC. RELIC is legal property of its developers,
  * whose names are not listed here. Please refer to the COPYRIGHT file
@@ -76,20 +76,24 @@ static inline int fp_sgn0(const fp_t t, bn_t k) {
 	return bn_get_bit(k, 0);
 }
 
-static void ep_map_impl(ep_t p, const uint8_t *msg, int len, const uint8_t *dst, int dst_len) {
+/*============================================================================*/
+/* Public definitions                                                         */
+/*============================================================================*/
+
+void ep_map_dst(ep_t p, const uint8_t *msg, int len, const uint8_t *dst, int dst_len) {
 	bn_t k;
 	fp_t t;
 	ep_t q;
 	int neg;
 	/* enough space for two field elements plus extra bytes for uniformity */
 	const int len_per_elm = (FP_PRIME + ep_param_level() + 7) / 8;
-	uint8_t *pseudo_random_bytes = RLC_ALLOCA(uint8_t, 4 * len_per_elm);
+	uint8_t *pseudo_random_bytes = RLC_ALLOCA(uint8_t, 2 * len_per_elm);
 
 	bn_null(k);
 	fp_null(t);
 	ep_null(q);
 
-	TRY {
+	RLC_TRY {
 		bn_new(k);
 		fp_new(t);
 		ep_new(q);
@@ -172,10 +176,10 @@ static void ep_map_impl(ep_t p, const uint8_t *msg, int len, const uint8_t *dst,
 				}
 		}
 	}
-	CATCH_ANY {
-		THROW(ERR_CAUGHT);
+	RLC_CATCH_ANY {
+		RLC_THROW(ERR_CAUGHT);
 	}
-	FINALLY {
+	RLC_FINALLY {
 		bn_free(k);
 		fp_free(t);
 		ep_free(q);
@@ -183,10 +187,6 @@ static void ep_map_impl(ep_t p, const uint8_t *msg, int len, const uint8_t *dst,
 	}
 }
 
-/*============================================================================*/
-/* Public definitions                                                         */
-/*============================================================================*/
-
 void ep_map(ep_t p, const uint8_t *msg, int len) {
-	ep_map_impl(p, msg, len, (const uint8_t *)"RELIC", 5);
+	ep_map_dst(p, msg, len, (const uint8_t *)"RELIC", 5);
 }

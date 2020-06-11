@@ -1,6 +1,6 @@
 /*
  * RELIC is an Efficient LIbrary for Cryptography
- * Copyright (C) 2007-2019 RELIC Authors
+ * Copyright (C) 2007-2020 RELIC Authors
  *
  * This file is part of RELIC. RELIC is legal property of its developers,
  * whose names are not listed here. Please refer to the COPYRIGHT file
@@ -24,7 +24,8 @@
 /**
  * @file
  *
- * Implementation of the Generalized Homomorphic Probabilistic Encryption.
+ * Implementation of the Damgård-Jurik-Nielsen Generalized Homomorphic
+ * Probabilistic Encryption.
  *
  * @ingroup cp
  */
@@ -52,7 +53,7 @@ int cp_ghpe_gen(bn_t pub, bn_t prv, int bits) {
 	bn_null(q);
 	bn_null(r);
 
-	TRY {
+	RLC_TRY {
 		bn_new(p);
 		bn_new(q);
 		bn_new(r);
@@ -75,9 +76,9 @@ int cp_ghpe_gen(bn_t pub, bn_t prv, int bits) {
 		bn_add_dig(p, p, 1);
 		bn_add_dig(q, q, 1);
 		bn_mul(pub, p, q);
-	} CATCH_ANY {
-		THROW(ERR_CAUGHT);
-	} FINALLY {
+	} RLC_CATCH_ANY {
+		RLC_THROW(ERR_CAUGHT);
+	} RLC_FINALLY {
 		bn_free(p);
 		bn_free(q);
 		bn_free(r);
@@ -98,7 +99,7 @@ int cp_ghpe_enc(bn_t c, bn_t m, bn_t pub, int s) {
 		return RLC_ERR;
 	}
 
-	TRY {
+	RLC_TRY {
 		bn_new(g);
 		bn_new(r);
 		bn_new(t);
@@ -122,10 +123,10 @@ int cp_ghpe_enc(bn_t c, bn_t m, bn_t pub, int s) {
 		bn_mul(c, c, r);
 		bn_mod(c, c, t);
 	}
-	CATCH_ANY {
+	RLC_CATCH_ANY {
 		result = RLC_ERR;
 	}
-	FINALLY {
+	RLC_FINALLY {
 		bn_free(g);
 		bn_free(r);
 		bn_free(t);
@@ -151,7 +152,7 @@ int cp_ghpe_dec(bn_t m, bn_t c, bn_t pub, bn_t prv, int s) {
 	bn_null(v);
 	bn_null(x);
 
-	TRY {
+	RLC_TRY {
 		bn_new(i);
 		bn_new(l);
 		bn_new(r);
@@ -161,8 +162,8 @@ int cp_ghpe_dec(bn_t m, bn_t c, bn_t pub, bn_t prv, int s) {
 		bn_new(x);
 
 		/* t = n^(s + 1). */
-		bn_copy(t, pub);
-		for (int i = 0; i < s; i++) {
+		bn_sqr(t, pub);
+		for (int i = 1; i < s; i++) {
 			bn_mul(t, t, pub);
 		}
 
@@ -207,10 +208,10 @@ int cp_ghpe_dec(bn_t m, bn_t c, bn_t pub, bn_t prv, int s) {
 		bn_mod_inv(v, prv, t);
 		bn_mul(m, u, v);
 		bn_mod(m, m, t);
-	} CATCH_ANY {
+	} RLC_CATCH_ANY {
 		result = RLC_ERR;
 	}
-	FINALLY {
+	RLC_FINALLY {
 		bn_free(i);
 		bn_free(l);
 		bn_free(r);

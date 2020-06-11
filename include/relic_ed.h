@@ -1,6 +1,6 @@
 /*
  * RELIC is an Efficient LIbrary for Cryptography
- * Copyright (C) 2007-2019 RELIC Authors
+ * Copyright (C) 2007-2020 RELIC Authors
  *
  * This file is part of RELIC. RELIC is legal property of its developers,
  * whose names are not listed here. Please refer to the COPYRIGHT file
@@ -154,7 +154,7 @@ typedef ed_st *ed_t;
 #define ed_new(A)															\
     A = (ed_t)calloc(1, sizeof(ed_st));										\
     if (A == NULL) {														\
-        THROW(ERR_NO_MEMORY);												\
+        RLC_THROW(ERR_NO_MEMORY);												\
     }
 
 #elif ALLOC == AUTO
@@ -479,6 +479,18 @@ void ed_norm_sim(ed_t *r, const ed_t *t, int n);
  * @param[in] len			- the array length in bytes.
  */
 void ed_map(ed_t p, const uint8_t *msg, int len);
+
+/**
+ * Maps a byte array to a point in an Edwards elliptic curve using
+ * an explicit domain separation tag.
+ *
+ * @param[out] p			- the result.
+ * @param[in] msg			- the byte array to map.
+ * @param[in] len			- the array length in bytes.
+ * @param[in] dst			- the domain separation tag.
+ * @param[in] dst_len		- the domain separation tag length in bytes.
+ */
+void ed_map_dst(ed_t p, const uint8_t *msg, int len, const uint8_t *dst, int dst_len);
 
 /**
  * Multiplies an Edwards elliptic curve point by an integer. Computes R = kP.

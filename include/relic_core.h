@@ -1,6 +1,6 @@
 /*
  * RELIC is an Efficient LIbrary for Cryptography
- * Copyright (C) 2007-2019 RELIC Authors
+ * Copyright (C) 2007-2020 RELIC Authors
  *
  * This file is part of RELIC. RELIC is legal property of its developers,
  * whose names are not listed here. Please refer to the COPYRIGHT file
@@ -46,6 +46,7 @@
 #include "relic_eb.h"
 #include "relic_epx.h"
 #include "relic_ed.h"
+#include "relic_pc.h"
 #include "relic_conf.h"
 #include "relic_bench.h"
 #include "relic_rand.h"
@@ -351,8 +352,8 @@ typedef struct _ctx_t {
 	fp_st ed_a;
 	/** The 'd' coefficient of the Edwards elliptic curve. */
 	fp_st ed_d;
-	/** The square root of -1 needed for hashing. */
-	fp_st srm1;
+	/** Precomputed constants for hashing. */
+	fp_st ed_map_c[4];
 	/** The generator of the Edwards elliptic curve. */
 	ed_st ed_g;
 	/** The order of the group of points in the Edwards elliptic curve. */
@@ -383,6 +384,10 @@ typedef struct _ctx_t {
 	/** @} */
 #endif /* WITH_PP */
 
+#if defined(WITH_PC)
+	gt_t gt_g;
+#endif
+
 #if BENCH > 0
 	/** Stores the time measured before the execution of the benchmark. */
 	bench_t before;
@@ -398,7 +403,7 @@ typedef struct _ctx_t {
 
 #if RAND != CALL
 	/** Internal state of the PRNG. */
-	uint8_t rand[RAND_SIZE];
+	uint8_t rand[RLC_RAND_SIZE];
 #else
 	void (*rand_call)(uint8_t *, int, void *);
 	void *rand_args;

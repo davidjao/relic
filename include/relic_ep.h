@@ -1,6 +1,6 @@
 /*
  * RELIC is an Efficient LIbrary for Cryptography
- * Copyright (C) 2007-2019 RELIC Authors
+ * Copyright (C) 2007-2020 RELIC Authors
  *
  * This file is part of RELIC. RELIC is legal property of its developers,
  * whose names are not listed here. Please refer to the COPYRIGHT file
@@ -152,12 +152,12 @@ enum {
 /**
  * Denotes a divisive twist.
  */
-#define EP_DTYPE		1
+#define RLC_EP_DTYPE		1
 
 /**
  * Denotes a multiplicative twist.
  */
-#define EP_MTYPE		2
+#define RLC_EP_MTYPE		2
 
 /**
  * Size of a precomputation table using the binary method.
@@ -291,7 +291,7 @@ typedef iso_st *iso_t;
 #define ep_new(A)															\
 	A = (ep_t)calloc(1, sizeof(ep_st));										\
 	if (A == NULL) {														\
-		THROW(ERR_NO_MEMORY);												\
+		RLC_THROW(ERR_NO_MEMORY);												\
 	}																		\
 
 #elif ALLOC == AUTO
@@ -1167,6 +1167,18 @@ void ep_norm_sim(ep_t *r, const ep_t *t, int n);
  * @param[in] len			- the array length in bytes.
  */
 void ep_map(ep_t p, const uint8_t *msg, int len);
+
+/**
+ * Maps a byte array to a point in a prime elliptic curve using
+ * an explicit domain separation tag.
+ *
+ * @param[out] p			- the result.
+ * @param[in] msg			- the byte array to map.
+ * @param[in] len			- the array length in bytes.
+ * @param[in] dst			- the domain separation tag.
+ * @param[in] dst_len		- the domain separation tag length in bytes.
+ */
+void ep_map_dst(ep_t p, const uint8_t *msg, int len, const uint8_t *dst, int dst_len);
 
 /**
  * Maps a byte array to a point in a prime elliptic curve with specified
