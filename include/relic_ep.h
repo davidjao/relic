@@ -69,6 +69,8 @@ enum {
 	CURVE_1174,
 	/** Curve25519 prime curve. */
 	CURVE_25519,
+	/** Curve Tweedledum given by Daira Hopwoord at https://github.com/daira/tweedle */
+	TWEEDLEDUM,
 	/** NIST P-256 prime curve. */
 	NIST_P256,
 	/** Brainpool P256r1 curve. */
@@ -119,6 +121,8 @@ enum {
 	B12_P638,
 	/** 1536-bit supersingular curve. */
 	SS_P1536,
+	/** 3072-bit supersingular curve. */
+	SS_P3072,
 };
 
 /**
@@ -705,7 +709,7 @@ int ep_param_embed(void);
 int ep_is_infty(const ep_t p);
 
 /**
- * Assigns a prime elliptic curve point to a point at the infinity.
+ * Assigns a prime elliptic curve point to the point at infinity.
  *
  * @param[out] p			- the point to assign.
  */
@@ -736,6 +740,14 @@ int ep_cmp(const ep_t p, const ep_t q);
 void ep_rand(ep_t p);
 
 /**
+ * Randomizes coordinates of a prime elliptic curve point.
+ *
+ * @param[out] r			- the blinded prime elliptic curve point.
+ * @param[in] p				- the prime elliptic curve point to blind.
+ */
+void ep_blind(ep_t r, const ep_t p);
+
+/**
  * Computes the right-hand side of the elliptic curve equation at a certain
  * prime elliptic curve point.
  *
@@ -749,7 +761,7 @@ void ep_rhs(fp_t rhs, const ep_t p);
  *
  * @param[in] p				- the point to test.
  */
-int ep_is_valid(const ep_t p);
+int ep_on_curve(const ep_t p);
 
 /**
  * Builds a precomputation table for multiplying a random prime elliptic point.
@@ -1119,6 +1131,16 @@ void ep_mul_sim_inter(ep_t r, const ep_t p, const bn_t k, const ep_t q,
  */
 void ep_mul_sim_joint(ep_t r, const ep_t p, const bn_t k, const ep_t q,
 		const bn_t m);
+
+/**
+ * Multiplies simultaneously elements from G_2. Computes R = \Sum_i=0..n k_iP_i.
+ *
+ * @param[out] r			- the result.
+ * @param[out] p			- the G_2 elements to multiply.
+ * @param[out] k			- the integer scalars.
+ * @param[out] n			- the number of elements to multiply.
+ */
+void ep_mul_sim_lot(ep_t r, ep_t p[], const bn_t k[], int n);
 
 /**
  * Multiplies and adds the generator and a prime elliptic curve point

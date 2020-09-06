@@ -36,22 +36,52 @@
 /*============================================================================*/
 
 void ep_pck(ep_t r, const ep_t p) {
-	int b = fp_get_bit(p->y, 0);
-	fp_copy(r->x, p->x);
-	fp_zero(r->y);
-	fp_set_bit(r->y, 0, b);
-	fp_set_dig(r->z, 1);
-	r->coord = BASIC;
+	bn_t halfQ, yValue;
+
+	bn_null(halfQ);
+	bn_null(yValue);
+
+	RLC_TRY {
+		bn_new(halfQ);
+		bn_new(yValue);
+
+		halfQ->used = RLC_FP_DIGS;
+		dv_copy(halfQ->dp, fp_prime_get(), RLC_FP_DIGS);
+		bn_hlv(halfQ, halfQ);
+
+		fp_prime_back(yValue, p->y);
+
+		int b = bn_cmp(yValue, halfQ) == RLC_GT;
+
+		fp_copy(r->x, p->x);
+		fp_zero(r->y);
+		fp_set_bit(r->y, 0, b);
+		fp_set_dig(r->z, 1);
+
+		r->coord = BASIC;
+	} RLC_CATCH_ANY {
+		RLC_THROW(ERR_CAUGHT);
+	}
+	RLC_FINALLY {
+		bn_free(yValue);
+		bn_free(halfQ);
+	}
 }
 
 int ep_upk(ep_t r, const ep_t p) {
 	fp_t t;
+	bn_t halfQ;
+	bn_t yValue;
 	int result = 0;
 
 	fp_null(t);
+	bn_null(halfQ);
+	bn_null(yValue);
 
 	RLC_TRY {
 		fp_new(t);
+		bn_new(halfQ);
+		bn_new(yValue);
 
 		ep_rhs(t, p);
 
@@ -59,9 +89,19 @@ int ep_upk(ep_t r, const ep_t p) {
 		result = fp_srt(t, t);
 
 		if (result) {
-			/* Verify if least significant bit of the result matches the
-			 * compressed y-coordinate. */
-			if (fp_get_bit(t, 0) != fp_get_bit(p->y, 0)) {
+			/* Verify whether the y coordinate is the larger one, matches the
+			 * compressed y-coordinate, from IETF pairing friendly spec:
+				sign_F_p(y) :=  { 1 if y > (p - 1) / 2, else
+								{ 0 otherwise.
+			*/
+			halfQ->used = RLC_FP_DIGS;
+			dv_copy(halfQ->dp, fp_prime_get(), RLC_FP_DIGS);
+			bn_hlv(halfQ, halfQ);  // This is equivalent to p - 1 / 2, floor division
+
+			fp_prime_back(yValue, t);
+			int sign_fpy = bn_cmp(yValue, halfQ) == RLC_GT;
+
+			if (sign_fpy != fp_get_bit(p->y, 0)) {
 				fp_neg(t, t);
 			}
 			fp_copy(r->x, p->x);
@@ -75,6 +115,8 @@ int ep_upk(ep_t r, const ep_t p) {
 	}
 	RLC_FINALLY {
 		fp_free(t);
+		bn_free(yValue);
+		bn_free(halfQ);
 	}
 	return result;
 }

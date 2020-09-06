@@ -317,6 +317,14 @@ void ed_projc_to_extnd(ed_t r, const fp_t x, const fp_t y, const fp_t z);
 void ed_rand(ed_t p);
 
 /**
+ * Randomizes coordinates of a prime elliptic curve point.
+ *
+ * @param[out] r			- the blinded Edwards elliptic curve point.
+ * @param[in] p				- the Edwards elliptic curve point to blind.
+ */
+void ed_blind(ed_t r, const ed_t p);
+
+/**
  * Computes the right-hand side of the elliptic curve equation at a certain
  * Edwards elliptic curve point.
  *
@@ -343,7 +351,7 @@ void ed_copy(ed_t r, const ed_t p);
 int ed_cmp(const ed_t p, const ed_t q);
 
 /**
- * Assigns an Edwards elliptic curve point to a point at the infinity.
+ * Assigns an Edwards elliptic curve point to the point at infinity.
  *
  * @param[out] p	- the point to assign.
  */
@@ -804,7 +812,7 @@ void ed_print(const ed_t p);
  *
  * @param[in] p       - the point to test.
  */
-int ed_is_valid(const ed_t p);
+int ed_on_curve(const ed_t p);
 
 /**
  * Returns the number of bytes necessary to store an Edwards elliptic curve point

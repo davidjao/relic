@@ -57,11 +57,12 @@ int cp_mklhs_gen(bn_t sk, g2_t pk) {
 	return result;
 }
 
-int cp_mklhs_sig(g1_t s, bn_t m, char *data, int dlen, char *label, int llen,
-		bn_t sk) {
+int cp_mklhs_sig(g1_t s, bn_t m, char *data, char *id, char *tag, bn_t sk) {
 	bn_t n;
 	g1_t a;
 	int result = RLC_OK;
+	uint8_t *str = RLC_ALLOCA(uint8_t,
+		strlen(id) + RLC_MAX(strlen(data), strlen(tag)));
 
 	bn_null(n);
 	g1_new(a);
@@ -73,9 +74,14 @@ int cp_mklhs_sig(g1_t s, bn_t m, char *data, int dlen, char *label, int llen,
 		pc_get_ord(n);
 		g1_mul_gen(a, m);
 
-		g1_map(s, (uint8_t *)data, dlen);
+		memcpy(str, data, strlen(data));
+		memcpy(str + strlen(data), id, strlen(id));
+		g1_map(s, str, strlen(data) + strlen(id));
 		g1_add(s, s, a);
-		g1_map(a, (uint8_t *)label, llen);
+
+		memcpy(str, id, strlen(id));
+		memcpy(str + strlen(id), tag, strlen(tag));
+		g1_map(a, str, strlen(id) + strlen(tag));
 		g1_add(s, s, a);
 		g1_norm(s, s);
 		g1_mul_key(s, s, sk);
@@ -84,6 +90,7 @@ int cp_mklhs_sig(g1_t s, bn_t m, char *data, int dlen, char *label, int llen,
 		result = RLC_ERR;
 	}
 	RLC_FINALLY {
+		RLC_FREE(str);
 		bn_free(n);
 		g1_free(a);
 	}
@@ -127,18 +134,22 @@ int cp_mklhs_evl(g1_t sig, g1_t s[], dig_t f[], int len) {
 	return result;
 }
 
-int cp_mklhs_ver(g1_t sig, bn_t m, bn_t mu[], char *data, int dlen,
-		char *label[], int llen[], dig_t f[][RLC_TERMS], int flen[], g2_t pk[],
-		int slen) {
+int cp_mklhs_ver(g1_t sig, bn_t m, bn_t mu[], char *data, char *id[],
+		char *tag[], dig_t *f[], int flen[], g2_t pk[], int slen) {
 	bn_t t, n;
 	g1_t d, *g = RLC_ALLOCA(g1_t, slen);
 	g2_t g2;
 	gt_t c, e;
-	int fmax = 0, ver1 = 0, ver2 = 0;
+	int imax = 0, lmax = 0, fmax = 0, ver1 = 0, ver2 = 0;
 	for (int i = 0; i < slen; i++) {
 		fmax = RLC_MAX(fmax, flen[i]);
+		imax = RLC_MAX(imax, strlen(id[i]));
+		for (int j = 0; j < flen[i]; j++) {
+			lmax = RLC_MAX(lmax, strlen(tag[j]));
+		}
 	}
 	g1_t *h = RLC_ALLOCA(g1_t, fmax);
+	uint8_t *str = RLC_ALLOCA(uint8_t, imax + RLC_MAX(strlen(data), lmax));
 
 	bn_null(t);
 	bn_null(n);
@@ -177,10 +188,14 @@ int cp_mklhs_ver(g1_t sig, bn_t m, bn_t mu[], char *data, int dlen,
 			ver1 = 1;
 		}
 
-		g1_map(d, (uint8_t *)data, dlen);
 		for (int i = 0; i < slen; i++) {
+			memcpy(str, data, strlen(data));
+			memcpy(str + strlen(data), id[i], strlen(id[i]));
+			g1_map(d, str, strlen(data) + strlen(id[i]));
+			memcpy(str, id[i], strlen(id[i]));
 			for (int j = 0; j < flen[i]; j++) {
-				g1_map(h[j], (uint8_t *)label[j], llen[j]);
+				memcpy(str + strlen(id[i]), tag[j], strlen(tag[j]));
+				g1_map(h[j], str, strlen(id[i]) + strlen(tag[j]));
 				g1_add(h[j], h[j], d);
 			}
 			g1_norm_sim(h, h, slen);
@@ -215,17 +230,23 @@ int cp_mklhs_ver(g1_t sig, bn_t m, bn_t mu[], char *data, int dlen,
 		}
 		RLC_FREE(g);
 		RLC_FREE(h);
+		RLC_FREE(str);
 	}
 	return (ver1 && ver2);
 }
 
-int cp_mklhs_off(g1_t h[], dig_t ft[], char *label[], int llen[], dig_t f[][RLC_TERMS],
-		int flen[], int slen) {
-	int fmax = 0, result = RLC_OK;;
+int cp_mklhs_off(g1_t h[], dig_t ft[], char *id[], char *tag[], dig_t *f[],
+		int flen[],	int slen) {
+	int imax = 0, lmax = 0, fmax = 0, result = RLC_OK;
 	for (int i = 0; i < slen; i++) {
 		fmax = RLC_MAX(fmax, flen[i]);
+		imax = RLC_MAX(imax, strlen(id[i]));
+		for (int j = 0; j < flen[i]; j++) {
+			lmax = RLC_MAX(lmax, strlen(tag[j]));
+		}
 	}
 	g1_t *_h = RLC_ALLOCA(g1_t, fmax);
+	uint8_t *str = RLC_ALLOCA(uint8_t, imax + lmax);
 
 	RLC_TRY {
 		if (_h == NULL) {
@@ -240,8 +261,10 @@ int cp_mklhs_off(g1_t h[], dig_t ft[], char *label[], int llen[], dig_t f[][RLC_
 
 		for (int i = 0; i < slen; i++) {
 			ft[i] = 0;
+			memcpy(str, id[i], strlen(id[i]));
 			for (int j = 0; j < flen[i]; j++) {
-				g1_map(_h[j], (uint8_t *)label[j], llen[j]);
+				memcpy(str + strlen(id[i]), tag[j], strlen(tag[j]));
+				g1_map(_h[j], str, strlen(id[i]) + strlen(tag[j]));
 				ft[i] += f[i][j];
 			}
 			g1_mul_sim_dig(h[i], _h, f[i], flen[i]);
@@ -255,17 +278,22 @@ int cp_mklhs_off(g1_t h[], dig_t ft[], char *label[], int llen[], dig_t f[][RLC_
 			g1_free(_h[j]);
 		}
 		RLC_FREE(_h);
+		RLC_FREE(str);
 	}
 	return result;
 }
 
-int cp_mklhs_onv(g1_t sig, bn_t m, bn_t mu[], char *data, int dlen,
-		g1_t h[], dig_t ft[], g2_t pk[], int slen) {
+int cp_mklhs_onv(g1_t sig, bn_t m, bn_t mu[], char *data, char *id[], g1_t h[],
+		dig_t ft[], g2_t pk[], int slen) {
 	bn_t t, n;
 	g1_t d, g1, *g = RLC_ALLOCA(g1_t, slen);
 	g2_t g2;
 	gt_t c, e;
-	int ver1 = 0, ver2 = 0;
+	int ver1 = 0, ver2 = 0, imax = 0;
+	for (int i = 0; i < slen; i++) {
+		imax = RLC_MAX(imax, strlen(id[i]));
+	}
+	uint8_t *str = RLC_ALLOCA(uint8_t, strlen(data) + imax);
 
 	bn_null(t);
 	bn_null(n);
@@ -301,8 +329,10 @@ int cp_mklhs_onv(g1_t sig, bn_t m, bn_t mu[], char *data, int dlen,
 			ver1 = 1;
 		}
 
-		g1_map(d, (uint8_t *)data, dlen);
 		for (int i = 0; i < slen; i++) {
+			memcpy(str, data, strlen(data));
+			memcpy(str + strlen(data), id[i], strlen(id[i]));
+			g1_map(d, str, strlen(data) + strlen(id[i]));
 			g1_mul_dig(g[i], d, ft[i]);
 			g1_add(g[i], g[i], h[i]);
 			g1_mul_gen(g1, mu[i]);

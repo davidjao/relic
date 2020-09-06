@@ -488,7 +488,7 @@ int eb_param_level(void);
 int eb_is_infty(const eb_t p);
 
 /**
- * Assigns a binary elliptic curve point to a point at the infinity.
+ * Assigns a binary elliptic curve point to the point at infinity.
  *
  * @param[out] p			- the point to assign.
  */
@@ -519,6 +519,14 @@ int eb_cmp(const eb_t p, const eb_t q);
 void eb_rand(eb_t p);
 
 /**
+ * Randomizes coordinates of a binary elliptic curve point.
+ *
+ * @param[out] r			- the blinded binary elliptic curve point.
+ * @param[in] p				- the binary elliptic curve point to blind.
+ */
+void eb_blind(eb_t r, const eb_t p);
+
+/**
  * Computes the right-hand side of the elliptic curve equation at a certain
  * elliptic curve point.
  *
@@ -531,7 +539,7 @@ void eb_rhs(fb_t rhs, const eb_t p);
  *
  * @param[in] p				- the point to test.
  */
-int eb_is_valid(const eb_t p);
+int eb_on_curve(const eb_t p);
 
 /**
  * Builds a precomputation table for multiplying a random binary elliptic point.

@@ -110,6 +110,10 @@ static void util(void) {
 		BENCH_ADD(eb_rand(p));
 	} BENCH_END;
 
+	BENCH_BEGIN("eb_blind") {
+		BENCH_ADD(eb_blind(p, p));
+	} BENCH_END;
+
 	BENCH_BEGIN("eb_rhs") {
 		eb_rand(p);
 		BENCH_ADD(eb_rhs(q->x, p));
@@ -120,9 +124,9 @@ static void util(void) {
 		BENCH_ADD(eb_tab(t, p, 4));
 	} BENCH_END;
 
-	BENCH_BEGIN("eb_is_valid") {
+	BENCH_BEGIN("eb_on_curve") {
 		eb_rand(p);
-		BENCH_ADD(eb_is_valid(p));
+		BENCH_ADD(eb_on_curve(p));
 	} BENCH_END;
 
 	BENCH_BEGIN("eb_size_bin (0)") {

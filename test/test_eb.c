@@ -130,13 +130,19 @@ static int util(void) {
 
 		TEST_BEGIN("validity test is correct") {
 			eb_set_infty(a);
-			TEST_ASSERT(eb_is_valid(a), end);
+			TEST_ASSERT(eb_on_curve(a), end);
 			eb_rand(a);
-			TEST_ASSERT(eb_is_valid(a), end);
+			TEST_ASSERT(eb_on_curve(a), end);
 			fb_rand(a->x);
-			TEST_ASSERT(!eb_is_valid(a), end);
+			TEST_ASSERT(!eb_on_curve(a), end);
 		}
 		TEST_END;
+
+		TEST_BEGIN("blinding is consistent") {
+			eb_rand(a);
+			eb_blind(a, a);
+			TEST_ASSERT(eb_on_curve(a), end);
+		} TEST_END;
 
 		TEST_BEGIN("reading and writing a point are consistent") {
 			for (int j = 0; j < 2; j++) {
@@ -420,7 +426,6 @@ static int doubling(void) {
 			eb_add(b, a, a);
 			eb_norm(b, b);
 			eb_dbl(c, a);
-			eb_norm(c, c);
 			TEST_ASSERT(eb_cmp(b, c) == RLC_EQ, end);
 		} TEST_END;
 
@@ -591,7 +596,7 @@ static int multiplication(void) {
 		eb_curve_get_ord(n);
 
 		TEST_BEGIN("generator has the right order") {
-			TEST_ASSERT(eb_is_valid(p), end);
+			TEST_ASSERT(eb_on_curve(p), end);
 			eb_mul(r, p, n);
 			TEST_ASSERT(eb_is_infty(r) == 1, end);
 		} TEST_END;
@@ -967,14 +972,12 @@ static int simultaneous(void) {
 			eb_mul(p, p, k);
 			eb_mul(q, q, l);
 			eb_add(q, q, p);
-			eb_norm(q, q);
 			TEST_ASSERT(eb_cmp(q, r) == RLC_EQ, end);
 			bn_neg(k, k);
 			eb_mul_sim(r, p, k, q, l);
 			eb_mul(p, p, k);
 			eb_mul(q, q, l);
 			eb_add(q, q, p);
-			eb_norm(q, q);
 			TEST_ASSERT(eb_cmp(q, r) == RLC_EQ, end);
 			bn_neg(l, l);
 			eb_mul_sim(r, p, k, q, l);
@@ -1002,14 +1005,12 @@ static int simultaneous(void) {
 			eb_mul(p, p, k);
 			eb_mul(q, q, l);
 			eb_add(q, q, p);
-			eb_norm(q, q);
 			TEST_ASSERT(eb_cmp(q, r) == RLC_EQ, end);
 			bn_neg(k, k);
 			eb_mul_sim_basic(r, p, k, q, l);
 			eb_mul(p, p, k);
 			eb_mul(q, q, l);
 			eb_add(q, q, p);
-			eb_norm(q, q);
 			TEST_ASSERT(eb_cmp(q, r) == RLC_EQ, end);
 			bn_neg(l, l);
 			eb_mul_sim_basic(r, p, k, q, l);
@@ -1038,14 +1039,12 @@ static int simultaneous(void) {
 			eb_mul(p, p, k);
 			eb_mul(q, q, l);
 			eb_add(q, q, p);
-			eb_norm(q, q);
 			TEST_ASSERT(eb_cmp(q, r) == RLC_EQ, end);
 			bn_neg(k, k);
 			eb_mul_sim_trick(r, p, k, q, l);
 			eb_mul(p, p, k);
 			eb_mul(q, q, l);
 			eb_add(q, q, p);
-			eb_norm(q, q);
 			TEST_ASSERT(eb_cmp(q, r) == RLC_EQ, end);
 			bn_neg(l, l);
 			eb_mul_sim_trick(r, p, k, q, l);
@@ -1074,14 +1073,12 @@ static int simultaneous(void) {
 			eb_mul(p, p, k);
 			eb_mul(q, q, l);
 			eb_add(q, q, p);
-			eb_norm(q, q);
 			TEST_ASSERT(eb_cmp(q, r) == RLC_EQ, end);
 			bn_neg(k, k);
 			eb_mul_sim_inter(r, p, k, q, l);
 			eb_mul(p, p, k);
 			eb_mul(q, q, l);
 			eb_add(q, q, p);
-			eb_norm(q, q);
 			TEST_ASSERT(eb_cmp(q, r) == RLC_EQ, end);
 			bn_neg(l, l);
 			eb_mul_sim_inter(r, p, k, q, l);
@@ -1110,14 +1107,12 @@ static int simultaneous(void) {
 			eb_mul(p, p, k);
 			eb_mul(q, q, l);
 			eb_add(q, q, p);
-			eb_norm(q, q);
 			TEST_ASSERT(eb_cmp(q, r) == RLC_EQ, end);
 			bn_neg(k, k);
 			eb_mul_sim_joint(r, p, k, q, l);
 			eb_mul(p, p, k);
 			eb_mul(q, q, l);
 			eb_add(q, q, p);
-			eb_norm(q, q);
 			TEST_ASSERT(eb_cmp(q, r) == RLC_EQ, end);
 			bn_neg(l, l);
 			eb_mul_sim_joint(r, p, k, q, l);
